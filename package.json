@@ -5,7 +5,8 @@
   "main": "dist/p5.j5.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && BUILD_MODE=production webpack",
+    "build": "webpack && BUILD_MODE=production webpack && npm run build:turbowarp",
+    "build:turbowarp": "webpack --config webpack.turbowarp.config.js && BUILD_MODE=production webpack --config webpack.turbowarp.config.js",
     "demos": "serve ./"
   },
   "repository": {
