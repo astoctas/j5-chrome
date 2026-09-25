@@ -9,7 +9,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: mode === 'development' ? 'p5.j5.js' : 'p5.j5.min.js'
+    filename: mode === 'development' ? 'j5.js' : 'j5.min.js'
   },
   mode,
   resolve: {

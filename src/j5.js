@@ -13,69 +13,10 @@ j5.serial = require('./browser-serialport');
 const { EventEmitter } = require('events');
 j5.events = new EventEmitter();
 
-j5.handleElementInit = function(btn, options = {}) {
-  navigator.usb.getDevices().then(function(devices){
-    if(devices.length){
-      const device = devices[0];
-      btn.style.display = 'none';
-      const serial = new p5.j5.usbSerial({device, options});
-      j5.events.emit('serial', serial);
-    }
-  })
-  .catch((err) => {
-    console.log('err', err);
-  });
 
-  btn.addEventListener("click", function( event ) {
-    console.log('usb btn click', event);
-    const device = new p5.j5.usbSerial();
-    console.log('usb device', device);
-    j5.events.emit('serial', device);
-  }, false);
-}
-
-j5.handleSerialElementInit = function(btn, options = {}) {
+  window.five = j5;
+  window.loadBoard = function (options = {}, callback, onerror) {
   
-  btn.addEventListener("click", function( event ) {
-    console.log(event);
-    const serial = new p5.j5.serial(options);
-    serial.isSerial = true;
-    j5.events.emit('serial', serial);
-    
-  }, false);
-
-}
-
-if(global.p5) {
-  const p5 = global.p5;
-  p5.j5 = j5;
-  global.five = j5;
-  p5.prototype.registerPreloadMethod('loadBoard', p5.prototype);
-  p5.prototype.loadBoard = function (options = {}, callback, onerror) {
-    
-    let serialClickElement;
-    if(options.serialElement) {
-      serialClickElement = options.serialElement;
-    } else {
-      serialClickElement = document.createElement('button');
-      serialClickElement.innerText = 'Authorize Serial Device';
-      serialClickElement.style.margin = '25px';
-      document.body.appendChild(serialClickElement);
-    }
-    j5.handleSerialElementInit(serialClickElement);
-
-    let clickElement;
-    if(options.element) {
-      clickElement = options.element;
-    } else {
-      clickElement = document.createElement('button');
-      clickElement.innerText = 'Authorize USB Device';
-      clickElement.style.margin = '25px';
-      document.body.appendChild(clickElement);
-    }
-    j5.handleElementInit(clickElement);
-
-
     // Create an object which will clone data from async function and return it.
     // We will need to update that object below, not overwrite/reassign it.
     // It is crucial for the preload() to keep the original pointer/reference.
@@ -86,8 +27,6 @@ if(global.p5) {
     // console.log('loadBoard starting', Date.now(), ret, options, callback, onerror);
   
     j5.events.once('serial', (port) => {
-      serialClickElement.style.display = 'none';
-      clickElement.style.display = 'none';
       let io, board; 
       if(port.isSerial) {
         port.open((err) => {
@@ -123,17 +62,20 @@ if(global.p5) {
         }
         j5.io = io;
         j5.board = board;
-        console.log('johnny-five board ready. p5.j5.board is the global for devtools:', board);
+        console.log('johnny-five board ready. J5.board is the global for devtools:', board);
         j5.events.emit('boardReady');
       });
     }
 
+    const serial = new j5.serial(options);
+    serial.isSerial = true;
+    j5.events.emit('serial', serial);
 
   
     // Return the object which has been filled with the data above.
     return ret;
   };
 
-}
+
 
 module.exports = j5;

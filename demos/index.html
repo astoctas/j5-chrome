@@ -1,23 +1,34 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      li {
-        margin-bottom: 15px;
-      }
-    </style>
-    
-  </head>
-  <body>
-    <h1>
-      p5.j5 examples
-    </h1>
-    <ul>
-      <li><a href="/demos/blink.html">Blink<br><img src="/demos/images/blink.png"></a><br></li>
-      <li><a href="/demos/sensors.html">Sensors<br><img src="/demos/images/sensors.jpg"></a><br></li>
-      <li><a href="/demos/node-pixel.html">Node-pixel<br><img src="/demos/images/node-pixel.jpg"></a><br></li>
-      <li><a href="/demos/node-pixel.html">Oled-js<br><img src="/demos/images/oled-js.jpg"></a><br></li>
-      <li><a href="/demos/node-pixel.html">Node-Led<br><img src="/demos/images/node-led.jpg"></a><br></li>
-    </ul> 
-  </body>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Johnny-Five WebSerial Puro</title>
+  <script src="/dist/j5.js"></script>
+</head>
+<body>
+
+  <h1>Control de Arduino mediante WebSerial Puro</h1>
+  <!-- El botón es OBLIGATORIO para disparar el cuadro de diálogo -->
+  <button id="btnConectar" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+    🔌 Seleccionar Puerto y Conectar
+  </button>
+
+  <script>
+    const boton = document.getElementById('btnConectar');
+
+    // Al hacer clic, el navegador abrirá el asistente nativo para elegir el puerto COM
+    boton.addEventListener('click', () => {
+      console.log("Abriendo selector de puertos del navegador...");
+      window.loadBoard();
+    });
+
+    // Código de Johnny-Five una vez enlazado el puerto
+    window.five.events.on('boardReady', () => {
+      console.log("¡Placa vinculada de forma exitosa!");
+
+      const led = new five.Led(13);
+      led.blink(500);
+    });
+  </script>
+</body>
 </html>
